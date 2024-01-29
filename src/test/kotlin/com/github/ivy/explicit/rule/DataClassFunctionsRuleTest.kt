@@ -1,10 +1,10 @@
-package com.github.ivy.explicit
+package com.github.ivy.explicit.rule
 
 import io.gitlab.arturbosch.detekt.api.Config
 import io.gitlab.arturbosch.detekt.rules.KotlinCoreEnvironmentTest
 import io.gitlab.arturbosch.detekt.test.compileAndLintWithContext
 import io.kotest.matchers.collections.shouldHaveSize
-import io.kotest.matchers.string.shouldNotBeBlank
+import io.kotest.matchers.shouldBe
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.junit.jupiter.api.Test
 
@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test
 internal class DataClassFunctionsRuleTest(private val env: KotlinCoreEnvironment) {
 
     @Test
-    fun `reports data class having functions`() {
+    fun `reports data class having one function`() {
         val code = """
         data class A(
             val x: Int
@@ -23,7 +23,9 @@ internal class DataClassFunctionsRuleTest(private val env: KotlinCoreEnvironment
         val findings = DataClassFunctionsRule(Config.empty).compileAndLintWithContext(env, code)
         findings shouldHaveSize 1
         val message = findings.first().message
-        message.shouldNotBeBlank()
+        message shouldBe """
+            Data class 'A' should not contain functions. Data classes should only model data and not define behavior. Found: function 'a()'.
+        """.trimIndent()
     }
 
     @Test
@@ -38,7 +40,34 @@ internal class DataClassFunctionsRuleTest(private val env: KotlinCoreEnvironment
     }
 
     @Test
-    fun `doesn't report data class with companion object`() {
+    fun `doesn't report data class with override functions`() {
+        val code = """
+        data class DisplayLoan(
+            val loan: Loan,
+            val amountPaid: Double,
+            val currencyCode: String? = getDefaultFIATCurrency().currencyCode,
+            val formattedDisplayText: String = "",
+            val percentPaid: Double = 0.0
+        ) : Reorderable {
+            override fun getItemOrderNum(): Double {
+                return loan.orderNum
+            }
+        
+            override fun withNewOrderNum(newOrderNum: Double): Reorderable {
+                return this.copy(
+                    loan = loan.copy(
+                        orderNum = newOrderNum
+                    )
+                )
+            }
+        }
+        """
+        val findings = DataClassFunctionsRule(Config.empty).compileAndLintWithContext(env, code)
+        findings shouldHaveSize 0
+    }
+
+    @Test
+    fun `doesn't report data class with functions in companion object`() {
         val code = """
         data class A(
             val x: Int

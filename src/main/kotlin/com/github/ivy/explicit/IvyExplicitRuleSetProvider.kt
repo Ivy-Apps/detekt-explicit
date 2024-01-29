@@ -1,5 +1,6 @@
 package com.github.ivy.explicit
 
+import com.github.ivy.explicit.rule.DataClassFunctionsRule
 import io.gitlab.arturbosch.detekt.api.Config
 import io.gitlab.arturbosch.detekt.api.RuleSet
 import io.gitlab.arturbosch.detekt.api.RuleSetProvider
