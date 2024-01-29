@@ -3,7 +3,7 @@ plugins {
     `maven-publish`
 }
 
-group = "org.example.detekt"
+group = "com.github.ivy-apps.explicit"
 version = "1.0-SNAPSHOT"
 
 dependencies {
