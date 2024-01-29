@@ -1,3 +1,3 @@
-MyRuleSet:
-  MyRule:
+IvyExplicit:
+  DataClassFunctions:
     active: true
