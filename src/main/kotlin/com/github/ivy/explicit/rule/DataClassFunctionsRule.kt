@@ -1,13 +1,12 @@
 package com.github.ivy.explicit.rule
 
-import com.github.ivy.explicit.util.FunctionMessage
+import com.github.ivy.explicit.util.Message
 import io.gitlab.arturbosch.detekt.api.*
 import io.gitlab.arturbosch.detekt.rules.isOverride
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
 class DataClassFunctionsRule(config: Config) : Rule(config) {
-    private val functionMessage: FunctionMessage by lazy { FunctionMessage() }
 
     override val issue = Issue(
         id = "DataClassFunctions",
@@ -44,6 +43,6 @@ class DataClassFunctionsRule(config: Config) : Rule(config) {
     ): String = buildString {
         append("Data class '${klass.name}' should not contain functions. ")
         append("Data classes should only model data and not define behavior. ")
-        append("Found: function '${functionMessage.signature(function)}'.")
+        append("Found: function '${Message.functionSignature(function)}'.")
     }
 }

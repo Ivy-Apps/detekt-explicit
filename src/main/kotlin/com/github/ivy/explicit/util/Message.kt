@@ -1,9 +1,10 @@
 package com.github.ivy.explicit.util
 
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtParameter
 
-class FunctionMessage {
-    fun signature(function: KtNamedFunction): String {
+object Message {
+    fun functionSignature(function: KtNamedFunction): String {
         // Extract the function name
         val fName = function.name ?: ""
 
@@ -27,5 +28,15 @@ class FunctionMessage {
         return "$fName($inputParams)" + if (returnType != null) {
             ": $returnType"
         } else ""
+    }
+
+    fun parameter(param: KtParameter): String = buildString {
+        append(param.name)
+        val type = param.typeReference?.text
+        if (type != null) {
+            append(": ")
+            append(type)
+            param.defaultValue?.text?.let { append(" = $it") }
+        }
     }
 }
