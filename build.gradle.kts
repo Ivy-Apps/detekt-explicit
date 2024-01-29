@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.ivy.explicit"
-version = "1.0-SNAPSHOT"
+version = "0.0.1"
 
 dependencies {
     compileOnly("io.gitlab.arturbosch.detekt:detekt-api:1.23.4")
