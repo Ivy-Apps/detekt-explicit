@@ -3,7 +3,7 @@ plugins {
     `maven-publish`
 }
 
-group = "com.github.ivy-apps.explicit"
+group = "com.github.ivy.explicit"
 version = "1.0-SNAPSHOT"
 
 dependencies {

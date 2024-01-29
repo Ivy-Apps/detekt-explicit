@@ -1,4 +1,4 @@
-package com.github.ivy-apps.explicit
+package com.github.ivy.explicit
 
 import io.gitlab.arturbosch.detekt.api.Config
 import io.gitlab.arturbosch.detekt.rules.KotlinCoreEnvironmentTest
