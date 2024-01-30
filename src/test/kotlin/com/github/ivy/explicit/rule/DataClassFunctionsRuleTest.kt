@@ -14,7 +14,7 @@ internal class DataClassFunctionsRuleTest(private val env: KotlinCoreEnvironment
     @Test
     fun `reports data class having one function`() {
         val code = """
-        data class A(
+        data class Abc(
             val x: Int
         ) {
             fun a() = 42
@@ -24,7 +24,7 @@ internal class DataClassFunctionsRuleTest(private val env: KotlinCoreEnvironment
         findings shouldHaveSize 1
         val message = findings.first().message
         message shouldBe """
-            Data class 'A' should not contain functions. Data classes should only model data and not define behavior. Found: function 'a()'.
+            Data class 'Abc' should not contain functions. Found: function 'a()'. Data classes should only model data and should not be tied to any behavior.
         """.trimIndent()
     }
 

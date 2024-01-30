@@ -11,8 +11,8 @@ class DataClassFunctionsRule(config: Config) : Rule(config) {
     override val issue = Issue(
         id = "DataClassFunctions",
         severity = Severity.Maintainability,
-        description = "Data classes should not define behavior. " +
-                "Their purpose is to model data.",
+        description = "Data classes should not be tied to any behavior. " +
+                "Their responsibility is to solely model data.",
         debt = Debt.TWENTY_MINS,
     )
 
@@ -42,7 +42,7 @@ class DataClassFunctionsRule(config: Config) : Rule(config) {
         function: KtNamedFunction
     ): String = buildString {
         append("Data class '${klass.name}' should not contain functions. ")
-        append("Data classes should only model data and not define behavior. ")
-        append("Found: function '${Message.functionSignature(function)}'.")
+        append("Found: function '${Message.functionSignature(function)}'. ")
+        append("Data classes should only model data and should not be tied to any behavior.")
     }
 }
