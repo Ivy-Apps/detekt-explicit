@@ -22,7 +22,7 @@ internal class DataClassDefaultValuesRuleTest(private val env: KotlinCoreEnviron
         findings shouldHaveSize 1
         val message = findings.first().message
         message shouldBe """
-            Data class 'A' should not have default values for properties. Found default value for property 'x: Int = 42'. This can lead to implicit instance constructions and problems.
+            Data class 'A' should not have default values. Found default value for property 'x: Int = 42'. This allows for instances of 'A' to be created without explicitly specifying all properties, potentially leading to unintended or inconsistent states.
         """.trimIndent()
     }
 

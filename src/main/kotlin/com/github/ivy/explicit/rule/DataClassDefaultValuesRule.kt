@@ -11,7 +11,7 @@ class DataClassDefaultValuesRule(config: Config) : Rule(config) {
         id = "DataClassDefaultValues",
         severity = Severity.Maintainability,
         description = "Data class properties should not have default values. " +
-                "Default values lead to implicit instance constructions and problems.",
+                "Default values lead to implicit creation of instances which leads to problems.",
         debt = Debt.TWENTY_MINS,
     )
 
@@ -33,8 +33,10 @@ class DataClassDefaultValuesRule(config: Config) : Rule(config) {
     }
 
     private fun failureMessage(klass: KtClass, parameter: KtParameter): String = buildString {
-        append("Data class '${klass.name}' should not have default values for properties. ")
+        val className = klass.name
+        append("Data class '$className' should not have default values. ")
         append("Found default value for property '${Message.parameter(parameter)}'. ")
-        append("This can lead to implicit instance constructions and problems.")
+        append("This allows for instances of '$className' to be created without explicitly specifying all properties, ")
+        append("potentially leading to unintended or inconsistent states.")
     }
 }
