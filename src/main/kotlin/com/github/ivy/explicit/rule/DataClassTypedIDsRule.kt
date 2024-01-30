@@ -67,6 +67,8 @@ class DataClassTypedIDsRule(config: Config) : Rule(config) {
         if (paramType == "UUID") return true
 
         name?.let { paramName ->
+            if (paramName == "id") return true
+
             val endsLikeID = IdFieldEndings.any {
                 paramName.endsWith(it, ignoreCase = false)
             }
