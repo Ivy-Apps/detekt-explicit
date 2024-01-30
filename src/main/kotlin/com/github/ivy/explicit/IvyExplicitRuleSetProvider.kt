@@ -2,6 +2,7 @@ package com.github.ivy.explicit
 
 import com.github.ivy.explicit.rule.DataClassDefaultValuesRule
 import com.github.ivy.explicit.rule.DataClassFunctionsRule
+import com.github.ivy.explicit.rule.DataClassTypedIDsRule
 import io.gitlab.arturbosch.detekt.api.Config
 import io.gitlab.arturbosch.detekt.api.RuleSet
 import io.gitlab.arturbosch.detekt.api.RuleSetProvider
@@ -15,6 +16,7 @@ class IvyExplicitRuleSetProvider : RuleSetProvider {
             listOf(
                 DataClassFunctionsRule(config),
                 DataClassDefaultValuesRule(config),
+                DataClassTypedIDsRule(config)
             ),
         )
     }
