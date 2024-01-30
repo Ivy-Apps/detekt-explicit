@@ -78,7 +78,7 @@ class DataClassTypedIDsRule(config: Config) : Rule(config) {
         return false
     }
 
-    private fun failureMessage(klass: KtClass, parameter: KtParameter) = buildString {
+    private fun failureMessage(klass: KtClass, parameter: KtParameter): String = buildString {
         val paramType = parameter.typeReference?.text
         append("Data class '${klass.name}' should use type-safe IDs ")
         append("instead of $paramType for property '${parameter.name}'. ")
