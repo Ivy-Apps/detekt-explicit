@@ -6,13 +6,22 @@ import io.gitlab.arturbosch.detekt.test.compileAndLintWithContext
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @KotlinCoreEnvironmentTest
 internal class DataClassFunctionsRuleTest(private val env: KotlinCoreEnvironment) {
 
+    private lateinit var rule: DataClassFunctionsRule
+
+    @BeforeEach
+    fun setup() {
+        rule = DataClassFunctionsRule(Config.empty)
+    }
+
     @Test
     fun `reports data class having one function`() {
+        // given
         val code = """
         data class Abc(
             val x: Int
@@ -20,7 +29,11 @@ internal class DataClassFunctionsRuleTest(private val env: KotlinCoreEnvironment
             fun a() = 42
         }
         """
-        val findings = DataClassFunctionsRule(Config.empty).compileAndLintWithContext(env, code)
+
+        // when
+        val findings = rule.compileAndLintWithContext(env, code)
+
+        // then
         findings shouldHaveSize 1
         val message = findings.first().message
         message shouldBe """
@@ -30,17 +43,23 @@ internal class DataClassFunctionsRuleTest(private val env: KotlinCoreEnvironment
 
     @Test
     fun `doesn't report data class without functions`() {
+        // given
         val code = """
         data class A(
             val x: Int
         )
         """
-        val findings = DataClassFunctionsRule(Config.empty).compileAndLintWithContext(env, code)
+
+        // when
+        val findings = rule.compileAndLintWithContext(env, code)
+
+        // then
         findings shouldHaveSize 0
     }
 
     @Test
     fun `doesn't report data class with override functions`() {
+        // given
         val code = """
         data class DisplayLoan(
             val loan: Loan,
@@ -62,12 +81,17 @@ internal class DataClassFunctionsRuleTest(private val env: KotlinCoreEnvironment
             }
         }
         """
-        val findings = DataClassFunctionsRule(Config.empty).compileAndLintWithContext(env, code)
+
+        // when
+        val findings = rule.compileAndLintWithContext(env, code)
+
+        // then
         findings shouldHaveSize 0
     }
 
     @Test
     fun `doesn't report data class with functions in companion object`() {
+        // given
         val code = """
         data class A(
             val x: Int
@@ -77,7 +101,11 @@ internal class DataClassFunctionsRuleTest(private val env: KotlinCoreEnvironment
             }
         }
         """
-        val findings = DataClassFunctionsRule(Config.empty).compileAndLintWithContext(env, code)
+
+        // when
+        val findings = rule.compileAndLintWithContext(env, code)
+
+        // then
         findings shouldHaveSize 0
     }
 }

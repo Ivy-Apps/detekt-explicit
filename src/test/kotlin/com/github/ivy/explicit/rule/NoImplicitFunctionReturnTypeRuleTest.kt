@@ -6,17 +6,31 @@ import io.gitlab.arturbosch.detekt.test.compileAndLintWithContext
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @KotlinCoreEnvironmentTest
 internal class NoImplicitFunctionReturnTypeRuleTest(private val env: KotlinCoreEnvironment) {
 
+    private lateinit var rule: NoImplicitFunctionReturnTypeRule
+
+    @BeforeEach
+    fun setup() {
+        rule = NoImplicitFunctionReturnTypeRule(Config.empty)
+    }
+
+
     @Test
     fun `reports function with implicit return type`() {
+        // given
         val code = """
         fun magicNumber() = 42
         """
-        val findings = NoImplicitFunctionReturnTypeRule(Config.empty).compileAndLintWithContext(env, code)
+
+        // when
+        val findings = rule.compileAndLintWithContext(env, code)
+
+        // then
         findings shouldHaveSize 1
         val message = findings.first().message
         message shouldBe """
@@ -26,32 +40,47 @@ internal class NoImplicitFunctionReturnTypeRuleTest(private val env: KotlinCoreE
 
     @Test
     fun `reports class method with implicit return type`() {
+        // given
         val code = """
         class A {
             fun a() = "Hello, world!"
         }
         """
-        val findings = NoImplicitFunctionReturnTypeRule(Config.empty).compileAndLintWithContext(env, code)
+
+        // when
+        val findings = rule.compileAndLintWithContext(env, code)
+
+        // then
         findings shouldHaveSize 1
     }
 
     @Test
     fun `doesn't report class method with explicit return type`() {
+        // given
         val code = """
         class A {
             fun a(): String = "Hello, world!"
         }
         """
-        val findings = NoImplicitFunctionReturnTypeRule(Config.empty).compileAndLintWithContext(env, code)
+
+        // when
+        val findings = rule.compileAndLintWithContext(env, code)
+
+        // then
         findings shouldHaveSize 0
     }
 
     @Test
     fun `doesn't report function with explicit return type`() {
+        // given
         val code = """
         fun a(): String = "Hello, world!"
         """
-        val findings = NoImplicitFunctionReturnTypeRule(Config.empty).compileAndLintWithContext(env, code)
+
+        // when
+        val findings = rule.compileAndLintWithContext(env, code)
+
+        // then
         findings shouldHaveSize 0
     }
 }

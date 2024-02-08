@@ -6,20 +6,34 @@ import io.gitlab.arturbosch.detekt.test.compileAndLintWithContext
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @KotlinCoreEnvironmentTest
-internal class DataClassTypedIDsRuleRuleTest(private val env: KotlinCoreEnvironment) {
+internal class DataClassTypedIDsRuleTest(private val env: KotlinCoreEnvironment) {
+
+    private lateinit var rule: DataClassTypedIDsRule
+
+    @BeforeEach
+    fun setup() {
+        rule = DataClassTypedIDsRule(Config.empty)
+    }
+
 
     @Test
     fun `reports data class having UUID as id`() {
+        // given
         val code = """
         data class A(
             val id: UUID,
             val name: String,
         )
         """
-        val findings = DataClassTypedIDsRule(Config.empty).compileAndLintWithContext(env, code)
+
+        // when
+        val findings = rule.compileAndLintWithContext(env, code)
+
+        // then
         findings shouldHaveSize 1
         val message = findings.first().message
         message shouldBe """
@@ -29,82 +43,117 @@ internal class DataClassTypedIDsRuleRuleTest(private val env: KotlinCoreEnvironm
 
     @Test
     fun `reports data class having String as id`() {
+        // given
         val code = """
         data class A(
             val id: String,
         )
         """
-        val findings = DataClassTypedIDsRule(Config.empty).compileAndLintWithContext(env, code)
+
+        // when
+        val findings = rule.compileAndLintWithContext(env, code)
+
+        // then
         findings shouldHaveSize 1
     }
 
     @Test
     fun `reports data class having transactionId Int`() {
+        // given
         val code = """
         data class A(
             val name: String,
             val transactionId: Int
         )
         """
-        val findings = DataClassTypedIDsRule(Config.empty).compileAndLintWithContext(env, code)
+
+        // when
+        val findings = rule.compileAndLintWithContext(env, code)
+
+        // then
         findings shouldHaveSize 1
     }
 
     @Test
     fun `doesn't report data class without ids`() {
+        // given
         val code = """
         data class Person(
             val firstName: String,
             val lastName: String,
         )
         """
-        val findings = DataClassTypedIDsRule(Config.empty).compileAndLintWithContext(env, code)
+
+        // when
+        val findings = rule.compileAndLintWithContext(env, code)
+
+        // then
         findings shouldHaveSize 0
     }
 
     @Test
     fun `doesn't report Dto classes`() {
+        // given
         val code = """
         data class SomeDto(
             val id: UUID
         )
         """
-        val findings = DataClassTypedIDsRule(Config.empty).compileAndLintWithContext(env, code)
+
+        // when
+        val findings = rule.compileAndLintWithContext(env, code)
+
+        // then
         findings shouldHaveSize 0
     }
 
     @Test
     fun `doesn't report Entity classes`() {
+        // given
         val code = """
         data class SomeEntity(
             val id: UUID
         )
         """
-        val findings = DataClassTypedIDsRule(Config.empty).compileAndLintWithContext(env, code)
+
+        // when
+        val findings = rule.compileAndLintWithContext(env, code)
+
+        // then
         findings shouldHaveSize 0
     }
 
     @Test
     fun `doesn't report classes annotated with @Entity`() {
+        // given
         val code = """
         @Entity(tableName = "budgets")
         data class A(
             val id: UUID
         )
         """
-        val findings = DataClassTypedIDsRule(Config.empty).compileAndLintWithContext(env, code)
+
+        // when
+        val findings = rule.compileAndLintWithContext(env, code)
+
+        // then
         findings shouldHaveSize 0
     }
 
     @Test
     fun `doesn't report classes annotated with @Serializable`() {
+        // given
         val code = """
         @Serializable
         data class A(
             val id: UUID
         )
         """
-        val findings = DataClassTypedIDsRule(Config.empty).compileAndLintWithContext(env, code)
+
+        // when
+        val findings = rule.compileAndLintWithContext(env, code)
+
+        // then
         findings shouldHaveSize 0
     }
 }
