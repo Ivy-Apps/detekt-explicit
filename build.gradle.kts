@@ -7,11 +7,11 @@ group = "com.github.ivy.explicit"
 version = "0.0.1"
 
 dependencies {
-    compileOnly("io.gitlab.arturbosch.detekt:detekt-api:1.23.4")
+    compileOnly("io.gitlab.arturbosch.detekt:detekt-api:1.23.5")
 
-    testImplementation("io.gitlab.arturbosch.detekt:detekt-test:1.23.4")
+    testImplementation("io.gitlab.arturbosch.detekt:detekt-test:1.23.5")
     testImplementation("io.kotest:kotest-assertions-core:5.8.0")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
 }
 
 kotlin {
