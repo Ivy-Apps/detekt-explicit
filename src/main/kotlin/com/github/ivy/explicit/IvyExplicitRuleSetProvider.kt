@@ -1,9 +1,6 @@
 package com.github.ivy.explicit
 
-import com.github.ivy.explicit.rule.DataClassDefaultValuesRule
-import com.github.ivy.explicit.rule.DataClassFunctionsRule
-import com.github.ivy.explicit.rule.DataClassTypedIDsRule
-import com.github.ivy.explicit.rule.NoImplicitFunctionReturnTypeRule
+import com.github.ivy.explicit.rule.*
 import io.gitlab.arturbosch.detekt.api.Config
 import io.gitlab.arturbosch.detekt.api.RuleSet
 import io.gitlab.arturbosch.detekt.api.RuleSetProvider
@@ -19,6 +16,7 @@ class IvyExplicitRuleSetProvider : RuleSetProvider {
                 DataClassDefaultValuesRule(config),
                 DataClassTypedIDsRule(config),
                 NoImplicitFunctionReturnTypeRule(config),
+                UnnecessaryPassThroughClassRule(config),
             ),
         )
     }
