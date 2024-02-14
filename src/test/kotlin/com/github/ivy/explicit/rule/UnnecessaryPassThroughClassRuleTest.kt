@@ -180,4 +180,79 @@ internal class UnnecessaryPassThroughClassRuleTest(private val env: KotlinCoreEn
         // then
         findings shouldHaveSize 0
     }
+
+    @Test
+    fun `does not report edge case 1`() {
+        // given
+        val code = """
+        class CalcWalletBalanceAct @Inject constructor(
+            private val accountsAct: AccountsAct,
+            private val calcAccBalanceAct: CalcAccBalanceAct,
+            private val exchangeAct: ExchangeAct,
+        ) : FPAction<CalcWalletBalanceAct.Input, BigDecimal>() {
+        
+            override suspend fun Input.compose(): suspend () -> BigDecimal = recipe().fixUnit()
+        
+            private suspend fun Input.recipe(): suspend (Unit) -> BigDecimal =
+                accountsAct thenFilter {
+                    withExcluded || it.includeInBalance
+                } thenMap {
+                    calcAccBalanceAct(
+                        CalcAccBalanceAct.Input(
+                            account = it,
+                            range = range
+                        )
+                    )
+                } thenMap {
+                    exchangeAct(
+                        ExchangeAct.Input(
+                            data = ExchangeData(
+                                baseCurrency = baseCurrency,
+                                fromCurrency = (it.account.currency ?: baseCurrency).toOption(),
+                                toCurrency = balanceCurrency
+                            ),
+                            amount = it.balance
+                        )
+                    )
+                } thenSum {
+                    it.orNull() ?: BigDecimal.ZERO
+                }
+        
+            data class Input(
+                val baseCurrency: String,
+                val balanceCurrency: String = baseCurrency,
+                val range: ClosedTimeRange = ClosedTimeRange.allTimeIvy(),
+                val withExcluded: Boolean = false
+            )
+        }
+        """
+
+        // when
+        val findings = rule.compileAndLintWithContext(env, code)
+
+        // then
+        findings shouldHaveSize 0
+    }
+
+    @Test
+    fun `does not report edge case 2`() {
+        // given
+        val code = """
+        @Singleton
+        class DataWriteEventBus @Inject constructor() {
+            private val internalEvents = MutableSharedFlow<DataWriteEvent>()
+            val events: Flow<DataWriteEvent> = internalEvents
+        
+            suspend fun post(event: DataWriteEvent) {
+                internalEvents.emit(event)
+            }
+        }
+        """
+
+        // when
+        val findings = rule.compileAndLintWithContext(env, code)
+
+        // then
+        findings shouldHaveSize 0
+    }
 }

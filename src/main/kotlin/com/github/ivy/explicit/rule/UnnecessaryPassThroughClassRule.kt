@@ -2,7 +2,6 @@ package com.github.ivy.explicit.rule
 
 import io.gitlab.arturbosch.detekt.api.*
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.isPrivate
 
 class UnnecessaryPassThroughClassRule(config: Config) : Rule(config) {
 
@@ -22,9 +21,9 @@ class UnnecessaryPassThroughClassRule(config: Config) : Rule(config) {
             klass.isData()
         ) return
 
-        val functions = klass.body?.functions?.filterNot { it.isPrivate() } ?: return
-        if (functions.isEmpty()) return
+        // TODO: Ignore if the class has any "val/var" in the body
 
+        val functions = klass.body?.functions?.takeIf { it.isNotEmpty() } ?: return
         val passThroughClass = functions.all(::isPassThroughFunction)
         if (passThroughClass) {
             report(CodeSmell(issue, Entity.from(klass), failureMessage(klass)))
