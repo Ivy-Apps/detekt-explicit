@@ -21,7 +21,9 @@ class UnnecessaryPassThroughClassRule(config: Config) : Rule(config) {
             klass.isData()
         ) return
 
-        // TODO: Ignore if the class has any "val/var" in the body
+        // Check if the class body contains any 'val' or 'var' properties
+        val hasProperties = klass.body?.properties?.isNotEmpty() ?: false
+        if (hasProperties) return  // Ignore the class if it contains properties
 
         val functions = klass.body?.functions?.takeIf { it.isNotEmpty() } ?: return
         val passThroughClass = functions.all(::isPassThroughFunction)
