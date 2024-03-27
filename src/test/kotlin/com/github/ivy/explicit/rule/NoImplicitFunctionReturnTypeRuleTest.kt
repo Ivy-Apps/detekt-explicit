@@ -83,4 +83,23 @@ internal class NoImplicitFunctionReturnTypeRuleTest(private val env: KotlinCoreE
         // then
         findings shouldHaveSize 0
     }
+
+    @Test
+    fun `doesn't report tests with implicit return type`() {
+        // given
+        val code = """
+        class SomeTest {
+            @Test
+            fun `my test`() = runTest {
+                // doesn't matter
+            }
+        }
+        """
+
+        // when
+        val findings = rule.compileAndLintWithContext(env, code)
+
+        // then
+        findings shouldHaveSize 0
+    }
 }

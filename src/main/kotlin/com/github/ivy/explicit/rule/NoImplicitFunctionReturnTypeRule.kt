@@ -3,6 +3,7 @@ package com.github.ivy.explicit.rule
 import com.github.ivy.explicit.util.Message
 import io.gitlab.arturbosch.detekt.api.*
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
 
 class NoImplicitFunctionReturnTypeRule(config: Config) : Rule(config) {
 
@@ -16,6 +17,12 @@ class NoImplicitFunctionReturnTypeRule(config: Config) : Rule(config) {
 
     override fun visitNamedFunction(function: KtNamedFunction) {
         super.visitNamedFunction(function)
+
+        if (function.isInsideTestClass()) {
+            // Do not report tests
+            return
+        }
+
         // Check if the function has an explicit return type
         if (function.typeReference == null && !function.hasBlockBody() && !function.isLocal) {
             report(
@@ -26,6 +33,10 @@ class NoImplicitFunctionReturnTypeRule(config: Config) : Rule(config) {
                 )
             )
         }
+    }
+
+    private fun KtNamedFunction.isInsideTestClass(): Boolean {
+        return containingClass()?.name?.endsWith("Test") == true
     }
 
     private fun failureMessage(function: KtNamedFunction): String = buildString {
